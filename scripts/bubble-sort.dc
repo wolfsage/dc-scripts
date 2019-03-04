@@ -6,18 +6,18 @@
 # register 'a' is the count of elements to be worked on
 z sa
 
-# register 'b' is the outer loop count, goes 'a-1'..0
+# register 'b' is the outer loop count, goes 'a'-1..0
 #   since bubble sort only needs n-1 passes
 la 1- sb
 
-# register 'g' is the inner loop count, goes 'a'..1,
-#   1 since if there's only one element left on the stack
-#   we have nothing to compare it to
-lasg
+# register 'g' is the inner loop count, goes 'a'-1..0
+#   since if there's only 1 item on the stack we have
+#   nothing to compare to
+la 1- sg
 
 # register 'h' is the reset loop count, goes 'a'-1..0
 #   since the last element is always left on the main stack
-lash
+la 1- sh
 
 # register 'q' ends the current macro loops
 [2Q]sq
@@ -43,7 +43,7 @@ lash
 # inner loop ('f')
 [
   lg d1- sg        # Decrement loop count by one
-  1=q              # Quit if we hit 1
+  0=q              # Quit if we hit 0
   dsx              # Copy top value to x for comparison
   r                # swap stack so we can get at next val
   dsy              # Copy to y
@@ -58,7 +58,7 @@ lash
 [
   lb d1- sb        # Decrement loop count by one
   0=q              # Quit if we hit 0
-  la sg            # Reset inner loop count
+  la 1- sg         # Reset inner loop count
   lfx              # Run inner loop
   la 1- sh         # Reset the reset loop count
   lcx              # Run the reset loop
