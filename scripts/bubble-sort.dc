@@ -6,30 +6,64 @@
 # register 'a' is the count of elements to be worked on
 z sa
 
-# register 'b' is the outer loop count
-# register 'g' is the inner loop count
-# register 'h' is the reset loop count (Always 'a 1-')
-la 1- sb lasg lash
+# register 'b' is the outer loop count, goes 'a-1'..0
+#   since bubble sort only needs n-1 passes
+la 1- sb
 
-# register 'e' holds the sorted data temporarily
+# register 'g' is the inner loop count, goes 'a'..1,
+#   1 since if there's only one element left on the stack
+#   we have nothing to compare it to
+lasg
 
-# register f holds the inner loop x/y are register to be compared
-# will loop 'a 1-' times
-[lgd1-sg 1>q dsx r dsy r ly lx <s Se lfx]sf
-
-# register i holds the outer loop, will loop 'a 1-' times,
-# calling the inner loop above
-[lbd1-sb 0>q la sg lfx la 1- sh lcx lix]si
-
-# register s is the swapper
-[r]ss
-
-# register 'c' is the restore-stack method, it puts all data
-# on register 'e' back onto the stack
-[lhd1-sh 0>q Le lcx]sc
+# register 'h' is the reset loop count, goes 'a'-1..0
+#   since the last element is always left on the main stack
+lash
 
 # register 'q' ends the current macro loops
 [2Q]sq
+
+# register 'c' is the restore-stack method, it puts all data
+# on register 'e' back onto the stack
+[
+  lh d1- sh        # Decrement loop count by one
+  0=q              # Quit if we hit 0
+  Le               # Move our top value to main stack
+  lcx              # Loop
+]sc
+
+# register s is the swapper of top two values
+[r]ss
+
+# Each pass of the inner loop (register 'f'), the top of the
+# stack gets sorted and then one value (the highest) is pushed
+# onto register 'e'. At the end of the inner loop, the register
+# is drained back onto the main stack. register x and y are
+# used to store temp values to be compared
+
+# inner loop ('f')
+[
+  lg d1- sg        # Decrement loop count by one
+  1=q              # Quit if we hit 1
+  dsx              # Copy top value to x for comparison
+  r                # swap stack so we can get at next val
+  dsy              # Copy to y
+  r                # Put stack back in previous state
+  ly lx <s         # Duplicate top two values, compare,
+                   # swap if x < y
+  Se               # Store onto register 'e'
+  lfx              # Loop
+]sf
+
+# Outer loop, calls inner loop 'a'-1 times
+[
+  lb d1- sb        # Decrement loop count by one
+  0=q              # Quit if we hit 0
+  la sg            # Reset inner loop count
+  lfx              # Run inner loop
+  la 1- sh         # Reset the reset loop count
+  lcx              # Run the reset loop
+  lix              # Loop
+]si
 
 # main(), I suppose, if you're a C programmer
 lix
