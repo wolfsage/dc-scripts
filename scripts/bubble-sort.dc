@@ -36,9 +36,9 @@ la 1- sh
 
 # Each pass of the inner loop (register 'f'), the top of the
 # stack gets sorted and then one value (the highest) is pushed
-# onto register 'e'. At the end of the inner loop, the register
-# is drained back onto the main stack. register x and y are
-# used to store temp values to be compared
+# onto register 'e'. At the end, only one value is left on
+# the stack (the lowest). We use registers x and y to hold
+# temp values for us for comparison
 
 # inner loop ('f')
 [
@@ -48,13 +48,16 @@ la 1- sh
   r                # swap stack so we can get at next val
   dsy              # Copy to y
   r                # Put stack back in previous state
-  ly lx <s         # Duplicate top two values, compare,
+  Ly Lx <s         # Duplicate top two values, compare,
                    # swap if x < y
   Se               # Store onto register 'e'
   lfx              # Loop
 ]sf
 
-# Outer loop, calls inner loop 'a'-1 times
+# Outer loop, calls inner loop 'a'-1 times. # At the end of
+# each inner loop, the register is drained back onto the main
+# stack.
+
 [
   lb d1- sb        # Decrement loop count by one
   0=q              # Quit if we hit 0
