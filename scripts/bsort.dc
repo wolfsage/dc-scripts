@@ -3,11 +3,8 @@
 # Elements to sort
 10 8 15 20 4 99 8 0 6 1 3
 
-# How many elements to work on
-11
-
 # register 'a' is the count of elements to be worked on
-sa
+z sa
 
 # register 'b' is the outer loop count
 # register 'g' is the inner loop count
