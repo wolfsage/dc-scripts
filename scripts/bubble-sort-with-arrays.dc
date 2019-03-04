@@ -1,0 +1,76 @@
+# A `dc` bubble sort algorithm
+
+# Elements to sort
+10 8 15 20 4 99 8 0 6 1 3
+
+# register 'a' is the count of elements to be worked on
+z sa
+
+# Loop ender
+[2Q]sq
+
+0 sc
+la sb
+
+# Fill our array
+[
+  lb d1- sb        # Decrement loop counter by 1
+  0=q              # Quit if we hit 0
+  lc :a            # Store top value in array pos c
+  lc 1+ sc         # Increment c by one
+  lfx              # Loop
+]sf
+
+lfx
+
+# Array pos
+0 sc
+
+# Swapper
+[
+  lc   ;a          # Get two values in array
+  lc1+ ;a
+  lc   :a          # Put them back swapped
+  lc1+ :a
+]ss
+
+# Inner loop
+[
+  le d1- se        # Increment loop counter by one
+  0=q              # Quit if we hit 0
+  lc   ;a          # Grab value at pos c
+  lc1+ ;a          # Grab value at pos c + 1
+  >s               # Swap if c +1 is greater
+  lc 1+ sc         # Increment c by one
+  lgx              # Loop
+]sg
+
+# Outer loop
+[
+  ld d1- sd        # Increment loop counter by one
+  0=q              # Quit if we hit 0
+  la 1- se         # Reset inner loop counter
+  0 sc             # Reset array pos c
+  lgx              # Execute inner loop
+  lhx              # Loop
+]sh
+
+# Outer loop counter
+la 1- sd
+
+# main(), for you C programmers
+lhx
+
+0 sc
+la sb
+
+# Print it out
+[
+  lb d1- sb        # Decrement loop counter by 1
+  0=q              # Quit if we hit 0
+  lc ;ap           # Print value in array pos c
+  lc 1+ sc         # Increment c by one
+  lzx              # Loop
+]sz
+
+lzx
