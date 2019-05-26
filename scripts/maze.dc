@@ -122,4 +122,100 @@
   _1
 ]sW
 
-20 lWx f
+# Junk top of stack macro
+[sj]sJ
+
+# Do with each cell
+
+# Leave this macro and the one above it
+[2q]sQ
+
+# West
+[
+  [west]p sj
+]s1
+
+# East
+[
+  [east]p sj
+]s2
+
+# North
+[
+  [north]p sj
+]s3
+
+# South
+[
+  [south]p sj
+]s4
+
+# Link register C has the cell we're operating on. Top of stack is
+# the cell to link to. We have to calculate direction
+[
+  [linking]p sj p
+  sT # Store that
+
+  lC lT - p
+  # Cell - To = 1? West
+  # Cell - To = -1? East
+  # Cell - To = rows? North
+  # Cell - To = -rows)? South
+  # Otherwise croak - something's effed
+  d 1=1
+  d _1=2
+  d lw=3
+  d lw _1 * =4
+
+  # Clean up the stack
+  sj
+]sl
+
+# Swapper
+[r]sR
+
+# Random link XXX
+[
+  # Ask stdin for a 1/0
+  [>2 please]p sj ?
+
+  # Swap if we got a 1
+  1=R
+
+  # Link
+  llx
+
+  # Drop the other
+  sj
+]sr
+
+[
+  lC 1+ d sC        # Increment our cell idx
+
+  lw lh * =q       # Quit if we hit our length * width
+
+  [working on]p sj lC p sj
+
+  f
+
+  # Get north neighbor if we have one
+  lC lNx d _1=J
+
+  # Get our east neighbor if we have one
+  lC lEx d _1=J
+
+  # Depth tells us how many neighbors
+
+  # 1 item? Just link
+  z 1=l
+
+  # 2 items? Random link
+  z 2=r
+
+  lMx              # Loop
+]sM
+
+0sC
+
+lMx
+
