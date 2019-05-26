@@ -1,0 +1,77 @@
+# Need 0 precision for % to work right
+0k
+
+# Used registers:
+# c - check bit macro
+# s - set bit macro
+# b - used by c (check/set bits) stores bit
+# v - used by c (check/set bits) stores value
+# m - maybe set bit on macro
+# e - maybe set bit off macro
+# n - set bit o(n) macro
+# f - set bit of(f) macro
+# j - junk register (dc doens't let you just pop a value off the stack??)
+
+# check bit, stack should bit,val
+# Takes two values off of the stack and stores them in registers b,v
+# Returns the answer on the stack
+# Ex: 5 0 lcx - See if bit 0 is set for 5
+[
+  sb # bit (index) - 0 based
+  sv # val
+  # (val/(base ^ index)) % base
+  lv
+  2 lb ^ # base 2
+  /
+  2 %
+]sc
+
+# set bit, stack should be on_or_off,bit,val
+# Takes three values off of the stack and stores them in registers o,b,v
+# If o is 1, sets the bit to 1, otherwise to 0
+# Ex: 5 2 0 lsx - Set 2nd bit to 0 - turn 101 to 001
+# Ex: 5 2 1 lsx - Set 2nd bit to 1 - turn 001 to 101
+[
+  so # on or off (1|0)
+  sb # bit (index) - 0 based
+  sv # val
+
+  # Set up our stack for set bit to on/off
+  lv
+  lb
+
+  lv
+  lb
+
+  lo 0 =e # 0? Maybe set bit to off
+  lo 1 =m # 1? Maybe set bit to on
+]ss
+
+# maybe set bit to off
+[
+  lcx 1=f
+  # Didn't? Pop bit off stack leaving value
+  sj
+]se
+
+# maybe set bit to on
+[
+  lcx 0=n
+  # Didn't? Pop bit off stack leaving value
+  sj
+]sm
+
+# set bit to off, private method. Use s above instaed
+[
+  2 r ^ -
+  # Return passed maybe *
+  2Q
+]sf
+
+# set bit to on, private method. Use s above instead
+[
+  2 r ^ +
+  # Return passed maybe *
+  2Q
+]sn
+
