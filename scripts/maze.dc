@@ -29,6 +29,7 @@
 # set bit, stack should be on_or_off,bit,val
 # Takes three values off of the stack and stores them in registers o,b,v
 # If o is 1, sets the bit to 1, otherwise to 0
+# When done, puts the value back on the stack
 # Ex: 5 2 0 lsx - Set 2nd bit to 0 - turn 101 to 001
 # Ex: 5 2 1 lsx - Set 2nd bit to 1 - turn 001 to 101
 [
@@ -130,42 +131,74 @@
 # Leave this macro and the one above it
 [2q]sQ
 
-# West
-[
-  [west]p sj
-]s1
+# These 4 are the bits (just the bits)
 
-# East
-[
-  [east]p sj
-]s2
+[0]s0 # north
+[1]s1 # south
+[2]s2 # east
+[4]s4 # west
 
-# North
+# Cell value getter. Takes idx from stack
 [
-  [north]p sj
-]s3
+  ;m
+]sG
 
-# South
+# Cell value setter. Stack should be val, idx
 [
-  [south]p sj
-]s4
+  :m
+]sX
+
+# West linker
+[
+  # Tell Cell they have a neighbor to the west
+  lC lGx l4x 1 lsx lC lXx 
+
+  # Tell neighbor they have a neighbor to the east
+  lT lGx l2x 1 lsx lT lXx
+]sU
+
+# East linker
+[
+  # Tell Cell they have a neighbor to the east
+  lC lGx l2x 1 lsx lC lXx
+
+  # Tell neighbor they have a neighbor to the west
+  lT lGx l4x 1 lsx lT lXx
+]sI
+
+# North linker
+[
+  # Tell Cell they have a neighbor to the north
+  lC lGx l0x 1 lsx lC lXx
+
+  # Tell neighbor they have a neighbor to the south
+  lT lGx l1x 1 lsx lT lXx
+]sO
+
+# South linker
+[
+  # Tell Cell they have a neighbor to the south
+  lC lGx l1x 1 lsx lC lXx
+
+  # Tell neighbor they have a neighbor to the north
+  lT lGx l0x 1 lsx lT lXx
+]sP
 
 # Link register C has the cell we're operating on. Top of stack is
 # the cell to link to. We have to calculate direction
 [
-  [linking]p sj p
   sT # Store that
 
-  lC lT - p
+  lC lT -
   # Cell - To = 1? West
   # Cell - To = -1? East
   # Cell - To = rows? North
   # Cell - To = -rows)? South
   # Otherwise croak - something's effed
-  d 1=1
-  d _1=2
-  d lw=3
-  d lw _1 * =4
+  d 1=U
+  d _1=I
+  d lw=O
+  d lw _1 * =P
 
   # Clean up the stack
   sj
@@ -194,10 +227,6 @@
 
   lw lh * =q       # Quit if we hit our length * width
 
-  [working on]p sj lC p sj
-
-  f
-
   # Get north neighbor if we have one
   lC lNx d _1=J
 
@@ -215,7 +244,7 @@
   lMx              # Loop
 ]sM
 
-0sC
+_1sC
 
 lMx
 
