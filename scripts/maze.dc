@@ -126,8 +126,6 @@
 # Junk top of stack macro
 [sj]sJ
 
-# Do with each cell
-
 # Leave this macro and the one above it
 [2q]sQ
 
@@ -222,10 +220,11 @@
   sj
 ]sr
 
+# Do with each cell
 [
   lC 1+ d sC        # Increment our cell idx
 
-  lw lh * =q       # Quit if we hit our length * width
+  lw lh * =q        # Quit if we hit our length * width
 
   # Get north neighbor if we have one
   lC lNx d _1=J
@@ -248,3 +247,132 @@ _1sC
 
 lMx
 
+# Reset our idx
+_1sC
+
+# And this is our renderer
+[+]n
+lw sd
+
+# Drop top border
+[
+  ld d1- sd        # Decrement our temp width
+
+  0=q
+
+  [---+]n
+
+  lBx
+]sB
+
+lBx
+
+[]psj
+
+[
+  [ ]n
+]s.
+
+[
+  [|]n
+]s;
+
+
+# Draw east wall or door
+[
+  # East is linked with us?
+  lC l2x lcx 1=.
+  sj
+
+  # East is not linked with us
+  lC l2x lcx 1!=;
+  sj
+]sD
+
+# Draw south wall or door
+[
+  # South is linked with us?
+  lC l1x lcx 1=:
+  sj
+
+  # South is not linked with us
+  lC l1x lcx 1!=\
+  sj
+]sL
+
+[
+  [---]n
+]s:
+
+[
+  [   ]n
+]s\
+
+# Draws our eastern walls
+[
+  [   ]n
+
+  # Get our east neighbor if we have one, and draw a wall or door
+  d lEx _1!=D
+  sj
+
+  # At the end? Draw a final wall
+  d lEx _1=;
+  sj
+
+  d lEx _1=q       # Quit if we can't go further east
+  sj
+
+  lC 1+ d sC        # Increment our cell idx
+
+  lzx              # Loop
+]sz
+
+# Draws our southern walls
+[
+  # Get our south neighbor if we have one, and draw a wall or door
+  d lSx _1!=L
+  sj
+
+  # At the end? Draw a final wall
+  d lSx _1=:
+  sj
+
+  [+]n
+
+  d lEx _1=q       # Quit if we can't go further east
+  sj
+
+  lC 1+ d sC        # Increment our cell idx
+
+  lxx              # Loop
+]sx
+
+_1 sH
+
+# Our drawing main loop. Double-pass each row to draw walls and floors
+[
+  lH 1+ d sH       # Increment our loop counter
+
+  lh =q            # Quit if we go over our height
+
+  # Set our cell idx to the westernmost point for our row
+  lH lw * sC
+
+  [|]n
+
+  # Draw our eastern walls
+  lzx []psj
+
+  # Reset
+  lH lw * sC
+
+  [+]n
+
+  # Draw our southern walls
+  lxx []psj
+
+  lFx               # Loop
+]sF
+
+lFx
