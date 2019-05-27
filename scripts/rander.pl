@@ -11,8 +11,8 @@ my $pid = open3(\*IN, \*OUT, \*ERR,
 );
 
 while (<OUT>) {
-  if ($_ =~ /^>2 please/) {
-    my $rand = int(rand(2));
+  if ($_ =~ /^>(\d+) please/) {
+    my $rand = int(rand($1+1));
     print { *IN } $rand . "\n";
     next;
   }

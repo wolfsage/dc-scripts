@@ -134,7 +134,7 @@
 [0]s0 # north
 [1]s1 # south
 [2]s2 # east
-[4]s4 # west
+[3]s3 # west
 
 # Cell value getter. Takes idx from stack
 [
@@ -149,37 +149,37 @@
 # West linker
 [
   # Tell Cell they have a neighbor to the west
-  lC lGx l4x 1 lsx lC lXx 
+  lC lGx 3 1 lsx lC lXx 
 
   # Tell neighbor they have a neighbor to the east
-  lT lGx l2x 1 lsx lT lXx
+  lT lGx 2 1 lsx lT lXx
 ]sU
 
 # East linker
 [
   # Tell Cell they have a neighbor to the east
-  lC lGx l2x 1 lsx lC lXx
+  lC lGx 2 1 lsx lC lXx
 
   # Tell neighbor they have a neighbor to the west
-  lT lGx l4x 1 lsx lT lXx
+  lT lGx 3 1 lsx lT lXx
 ]sI
 
 # North linker
 [
   # Tell Cell they have a neighbor to the north
-  lC lGx l0x 1 lsx lC lXx
+  lC lGx 0 1 lsx lC lXx
 
   # Tell neighbor they have a neighbor to the south
-  lT lGx l1x 1 lsx lT lXx
+  lT lGx 1 1 lsx lT lXx
 ]sO
 
 # South linker
 [
   # Tell Cell they have a neighbor to the south
-  lC lGx l1x 1 lsx lC lXx
+  lC lGx 1 1 lsx lC lXx
 
   # Tell neighbor they have a neighbor to the north
-  lT lGx l0x 1 lsx lT lXx
+  lT lGx 0 1 lsx lT lXx
 ]sP
 
 # Link register C has the cell we're operating on. Top of stack is
@@ -281,22 +281,22 @@ lBx
 # Draw east wall or door
 [
   # East is linked with us?
-  lC l2x lcx 1=.
+  lC lGx 2 lcx 1=.
   sj
 
   # East is not linked with us
-  lC l2x lcx 1!=;
+  lC lGx 2 lcx 1!=;
   sj
 ]sD
 
 # Draw south wall or door
 [
   # South is linked with us?
-  lC l1x lcx 1=:
+  lC lGx 1 lcx 1=\
   sj
 
   # South is not linked with us
-  lC l1x lcx 1!=\
+  lC lGx 1 lcx 1!=:
   sj
 ]sL
 
@@ -310,6 +310,7 @@ lBx
 
 # Draws our eastern walls
 [
+  lC
   [   ]n
 
   # Get our east neighbor if we have one, and draw a wall or door
@@ -323,13 +324,15 @@ lBx
   d lEx _1=q       # Quit if we can't go further east
   sj
 
-  lC 1+ d sC        # Increment our cell idx
+  lC 1+ sC        # Increment our cell idx
 
   lzx              # Loop
 ]sz
 
 # Draws our southern walls
 [
+  lC
+
   # Get our south neighbor if we have one, and draw a wall or door
   d lSx _1!=L
   sj
@@ -343,7 +346,7 @@ lBx
   d lEx _1=q       # Quit if we can't go further east
   sj
 
-  lC 1+ d sC        # Increment our cell idx
+  lC 1+ sC        # Increment our cell idx
 
   lxx              # Loop
 ]sx
@@ -362,7 +365,9 @@ _1 sH
   [|]n
 
   # Draw our eastern walls
-  lzx []psj
+  lzx
+
+  [] psj
 
   # Reset
   lH lw * sC
@@ -370,9 +375,11 @@ _1 sH
   [+]n
 
   # Draw our southern walls
-  lxx []psj
+  lxx
+  []psj
 
   lFx               # Loop
 ]sF
 
+# draw it
 lFx
