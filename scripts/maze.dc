@@ -1,6 +1,9 @@
 # Need 0 precision for % to work right
 0k
 
+# Get our PRNG val from argv
+?sk
+
 # Used registers:
 # c - check bit macro
 # s - set bit macro
@@ -205,10 +208,14 @@
 # Swapper
 [r]sR
 
-# Random link XXX
+# PRNG
 [
-  # Ask stdin for a 1/0
-  [>2 please]p sj ?
+  2 32 ^ lk * 21343 + 234241 % sk lk
+]sK
+
+# Random link
+[
+  lKx 2 %
 
   # Swap if we got a 1
   1=R

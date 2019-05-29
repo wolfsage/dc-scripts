@@ -19,3 +19,7 @@ while (<OUT>) {
 
   print $_;
 }
+
+while (<ERR>) {
+ print "WTF: $_\n";
+}
