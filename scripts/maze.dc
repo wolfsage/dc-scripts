@@ -1,12 +1,14 @@
 # Need 0 precision for % to work right
 0k
 
+?sZ
+
 # Used registers:
 # c - check bit macro
 # s - set bit macro
 # b - used by c (check/set bits) stores bit
 # v - used by c (check/set bits) stores value
-# m - maybe set bit on macro
+# m - tmaybe set bit on macro
 # e - maybe set bit off macro
 # n - set bit o(n) macro
 # f - set bit of(f) macro
@@ -98,6 +100,7 @@
 [
   sC # store that for later use
   lC # load it back in
+
   1 +
   d lw % 0 !=q
   sj
@@ -205,10 +208,11 @@
 # Swapper
 [r]sR
 
-# Random link XXX
+# Pseudo random number generator
 [
-  # Ask stdin for a 1/0
-  [>2 please]p sj ?
+  2 32 ^ lZ * 21343 + 234241 % sZ lZ
+
+  2%
 
   # Swap if we got a 1
   1=R
@@ -282,22 +286,18 @@ lBx
 [
   # East is linked with us?
   lC lGx 2 lcx 1=.
-  sj
 
   # East is not linked with us
   lC lGx 2 lcx 1!=;
-  sj
 ]sD
 
 # Draw south wall or door
 [
   # South is linked with us?
   lC lGx 1 lcx 1=\
-  sj
 
   # South is not linked with us
   lC lGx 1 lcx 1!=:
-  sj
 ]sL
 
 [
@@ -310,41 +310,33 @@ lBx
 
 # Draws our eastern walls
 [
-  lC
   [   ]n
 
   # Get our east neighbor if we have one, and draw a wall or door
-  d lEx _1!=D
-  sj
+  lC lEx _1!=D
 
   # At the end? Draw a final wall
-  d lEx _1=;
-  sj
+  lC lEx _1=;
 
-  d lEx _1=q       # Quit if we can't go further east
-  sj
+  lC lEx _1=q       # Quit if we can't go further east
 
-  lC 1+ sC        # Increment our cell idx
+  lC 1+ sC          # Increment our cell idx
 
   lzx              # Loop
+
 ]sz
 
 # Draws our southern walls
 [
-  lC
-
   # Get our south neighbor if we have one, and draw a wall or door
-  d lSx _1!=L
-  sj
+  lC lSx _1!=L
 
   # At the end? Draw a final wall
-  d lSx _1=:
-  sj
+  lC lSx _1=:
 
   [+]n
 
-  d lEx _1=q       # Quit if we can't go further east
-  sj
+  lC lEx _1=q       # Quit if we can't go further east
 
   lC 1+ sC        # Increment our cell idx
 
